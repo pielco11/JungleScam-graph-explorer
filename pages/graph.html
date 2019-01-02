@@ -185,9 +185,16 @@
             var rawQuery  = 'select * from wsw';
             var db = new sqlite3.Database(document.getElementById("submitDatabase").files[0].path);
             db.each(rawQuery, (err, result) => {
-                loadNode(result.product_id, icons['key'])
-                loadNode(result.seller_id, icons['seller'])
-                loadLink(result.product_id, result.seller_id)
+                let rmScore = '';
+                db.get('select rm_score from products where id = ?', [result.product_id], (err, row) => {
+                  if (err) {
+                      return console.error(err.message);
+                  }
+                  rmScore = row.rm_score;
+                  loadNode(result.product_id, icons[rmScore])
+                  loadNode(result.seller_id, icons['seller'])
+                  loadLink(result.product_id, result.seller_id)
+                })
             })
         };
         function precomputeGraph(){
